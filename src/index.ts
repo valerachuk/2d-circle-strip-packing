@@ -11,7 +11,12 @@ import {
   getCornerPositionsBetweenLeftAndTopEdge,
   getDistanceFromStripLeftToCircleRight,
 } from "./math";
-import { Circle, StripPackingInput, Vector2d } from "./types";
+import {
+  Circle,
+  StripPackingInput,
+  StripPackingOutput,
+  Vector2d,
+} from "./types";
 import { getMinBySelector } from "./utils";
 
 const enum StripEdges {
@@ -30,7 +35,7 @@ export class Strip {
     this._stripWidth = stripPackingInput.stripWidth;
   }
 
-  public pendingPlacements(): number {
+  public pendingPlacementsCount(): number {
     return this._pendingPlacementRadii.length;
   }
 
@@ -40,6 +45,23 @@ export class Strip {
     );
 
     return Math.max(...distancesToMaxRight);
+  }
+
+  public isCompleted(): boolean {
+    return this.pendingPlacementsCount() === 0;
+  }
+
+  public getOutput(): StripPackingOutput {
+    if (!this.isCompleted()) {
+      throw new Error("The solution is not found yet.");
+    }
+
+    const stripLength = this.currentStripLength();
+
+    return {
+      circles: this._packedCircles,
+      stripLength,
+    };
   }
 
   public placeNext(pendingPlacementIndex: number): void {
