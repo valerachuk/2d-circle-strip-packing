@@ -20,24 +20,59 @@ export const circleDistanceToStripTop = (
   stripWidth: number
 ): number => stripWidth - (circle.center.y + circle.radius);
 
-export const doesCirceIntersectWithStripLeft = (circle: Circle): boolean =>
-  circleDistanceToStripLeft(circle) < 0;
+// export const doesCirceIntersectWithStripLeft = (circle: Circle): boolean =>
+//   circleDistanceToStripLeft(circle) < 0;
 
-export const doesCirceIntersectWithStripBottom = (circle: Circle): boolean =>
-  circleDistanceToStripBottom(circle) < 0;
+// export const doesCirceIntersectWithStripBottom = (circle: Circle): boolean =>
+//   circleDistanceToStripBottom(circle) < 0;
 
-export const doesCircleIntersectWithStripTop = (
-  circle: Circle,
-  stripWidth: number
-): boolean => circleDistanceToStripTop(circle, stripWidth) < 0;
+// export const doesCircleIntersectWithStripTop = (
+//   circle: Circle,
+//   stripWidth: number
+// ): boolean => circleDistanceToStripTop(circle, stripWidth) < 0;
 
 export const getDistanceFromStripLeftToCircleRight = (circle: Circle): number =>
   circle.center.x + circle.radius;
 
-export const getCornerPositionsInBetweenCircles = (
+export const getCornerPositionsBetweenCircles = (
   circleA: Circle,
   circleB: Circle,
   radius: number
+): Array<Vector2d> => {
+  throw new Error("Not implemented.");
+};
+
+export const getCornerPositionsBetweenCircleAndLeftEdge = (
+  circle: Circle,
+  radius: number
+): Array<Vector2d> => {
+  throw new Error("Not implemented.");
+};
+
+export const getCornerPositionsBetweenCircleAndBottomEdge = (
+  circle: Circle,
+  radius: number
+): Array<Vector2d> => {
+  throw new Error("Not implemented.");
+};
+
+export const getCornerPositionsBetweenCircleAndTopEdge = (
+  circle: Circle,
+  radius: number,
+  stripWidth: number
+): Array<Vector2d> => {
+  throw new Error("Not implemented.");
+};
+
+export const getCornerPositionsBetweenLeftAndBottomEdge = (
+  radius: number
+): Array<Vector2d> => {
+  throw new Error("Not implemented.");
+};
+
+export const getCornerPositionsBetweenLeftAndTopEdge = (
+  radius: number,
+  stripWidth: number
 ): Array<Vector2d> => {
   throw new Error("Not implemented.");
 };
