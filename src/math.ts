@@ -20,17 +20,6 @@ export const circleDistanceToStripTop = (
   stripWidth: number
 ): number => stripWidth - (circle.center.y + circle.radius);
 
-// export const doesCirceIntersectWithStripLeft = (circle: Circle): boolean =>
-//   circleDistanceToStripLeft(circle) < 0;
-
-// export const doesCirceIntersectWithStripBottom = (circle: Circle): boolean =>
-//   circleDistanceToStripBottom(circle) < 0;
-
-// export const doesCircleIntersectWithStripTop = (
-//   circle: Circle,
-//   stripWidth: number
-// ): boolean => circleDistanceToStripTop(circle, stripWidth) < 0;
-
 export const getDistanceFromStripLeftToCircleRight = (circle: Circle): number =>
   circle.center.x + circle.radius;
 

@@ -42,6 +42,51 @@ export class Strip {
     return Math.max(...distancesToMaxRight);
   }
 
+  public placeNext(pendingPlacementIndex: number): void {
+    const radiusToPlace = this._pendingPlacementRadii.splice(
+      pendingPlacementIndex,
+      1
+    )[0];
+
+    const pendingPlacements: Array<{
+      circle: Circle;
+      minNeighborDistance: number;
+    }> = [];
+
+    for (let i = -3; i < this._packedCircles.length; i++) {
+      for (let j = i + 1; j < this._packedCircles.length; j++) {
+        const cornerPositions = this._getCornerPositions(i, j, radiusToPlace);
+
+        for (const circleCenter of cornerPositions) {
+          const circle: Circle = {
+            center: circleCenter,
+            radius: radiusToPlace,
+          };
+
+          const minNeighborDistance = this._getMinDistanceToNeighbor(
+            circle,
+            i,
+            j
+          );
+          if (minNeighborDistance === null) {
+            continue;
+          }
+
+          pendingPlacements.push({
+            circle,
+            minNeighborDistance,
+          });
+        }
+      }
+    }
+
+    const { circle: circleToPlace } = getMinBySelector(
+      pendingPlacements,
+      ({ minNeighborDistance }) => minNeighborDistance
+    );
+    this._packedCircles.push(circleToPlace);
+  }
+
   private _getCornerPositions(
     i: number,
     j: number,
@@ -115,7 +160,7 @@ export class Strip {
       }
 
       if (currentDistance < 0) {
-        continue;
+        return null;
       }
 
       if (minDistance === null || currentDistance < minDistance) {
@@ -124,50 +169,5 @@ export class Strip {
     }
 
     return minDistance;
-  }
-
-  private _placeNext(pendingPlacementIndex: number): void {
-    const radiusToPlace = this._pendingPlacementRadii.splice(
-      pendingPlacementIndex,
-      1
-    )[0];
-
-    const pendingPlacements: Array<{
-      circle: Circle;
-      minNeighborDistance: number;
-    }> = [];
-
-    for (let i = -3; i < this._packedCircles.length; i++) {
-      for (let j = i + 1; j < this._packedCircles.length; j++) {
-        const cornerPositions = this._getCornerPositions(i, j, radiusToPlace);
-
-        for (const circleCenter of cornerPositions) {
-          const circle: Circle = {
-            center: circleCenter,
-            radius: radiusToPlace,
-          };
-
-          const minNeighborDistance = this._getMinDistanceToNeighbor(
-            circle,
-            i,
-            j
-          );
-          if (minNeighborDistance === null) {
-            continue;
-          }
-
-          pendingPlacements.push({
-            circle,
-            minNeighborDistance,
-          });
-        }
-      }
-    }
-
-    const { circle: circleToPlace } = getMinBySelector(
-      pendingPlacements,
-      ({ minNeighborDistance }) => minNeighborDistance
-    );
-    this._packedCircles.push(circleToPlace);
   }
 }
