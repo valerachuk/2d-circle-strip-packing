@@ -25,12 +25,27 @@ const enum StripEdges {
   bottom = -1,
 }
 
-export class Strip {
-  private readonly _packedCircles: Array<Circle> = [];
+export class StripPackingAlgorithm {
+  private readonly _packedCircles: Array<Circle>;
   private readonly _pendingPlacementRadii: Array<number>;
   private readonly _stripWidth: number;
 
-  constructor(stripPackingInput: StripPackingInput) {
+  public constructor(another: StripPackingAlgorithm);
+  public constructor(stripPackingInput: StripPackingInput);
+
+  constructor(stripPackingInput: StripPackingInput | StripPackingAlgorithm) {
+    if (stripPackingInput instanceof StripPackingAlgorithm) {
+      this._packedCircles = stripPackingInput._packedCircles.map((circle) =>
+        Object.assign({}, circle)
+      );
+      this._pendingPlacementRadii =
+        stripPackingInput._pendingPlacementRadii.concat();
+      this._stripWidth = stripPackingInput._stripWidth;
+
+      return;
+    }
+
+    this._packedCircles = [];
     this._pendingPlacementRadii = stripPackingInput.circleRadii;
     this._stripWidth = stripPackingInput.stripWidth;
   }
