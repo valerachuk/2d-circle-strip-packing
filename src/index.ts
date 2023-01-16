@@ -1,210 +1,73 @@
-import {
-  circleDistanceToStripBottom,
-  circleDistanceToStripLeft,
-  circleDistanceToStripTop,
-  circlesDistance,
-  getCornerPositionsBetweenCircleAndBottomEdge,
-  getCornerPositionsBetweenCircleAndLeftEdge,
-  getCornerPositionsBetweenCircleAndTopEdge,
-  getCornerPositionsBetweenCircles,
-  getCornerPositionsBetweenLeftAndBottomEdge,
-  getCornerPositionsBetweenLeftAndTopEdge,
-  getDistanceFromStripLeftToCircleRight,
-} from "./math";
-import {
-  Circle,
-  StripPackingInput,
-  StripPackingOutput,
-  Vector2d,
-} from "./types";
-import { getMinBySelector } from "./utils";
+import { StripPackingState } from "./strip-packing";
+import { StripPackingInput } from "./types";
+import { getMinIndexBySelector } from "./utils";
 
-const enum StripEdges {
-  left = -3,
-  bottom = -2,
-  top = -1,
-}
+type BeamSearchDef = {
+  beamWidth: number;
+};
 
-export class StripPackingAlgorithm {
-  private readonly _packedCircles: Array<Circle>;
-  private readonly _pendingPlacementRadii: Array<number>;
-  private readonly _stripWidth: number;
+export class StripPackingBeamSearch {
+  constructor(private readonly _def: BeamSearchDef) {}
 
-  public constructor(another: StripPackingAlgorithm);
-  public constructor(stripPackingInput: StripPackingInput);
+  public solve(stripPackingInput: StripPackingInput): StripPackingState {
+    const startingSolution = new StripPackingState(stripPackingInput);
+    startingSolution.placeNext(0);
 
-  constructor(stripPackingInput: StripPackingInput | StripPackingAlgorithm) {
-    if (stripPackingInput instanceof StripPackingAlgorithm) {
-      this._packedCircles = stripPackingInput._packedCircles.map((circle) =>
-        Object.assign({}, circle)
-      );
-      this._pendingPlacementRadii =
-        stripPackingInput._pendingPlacementRadii.concat();
-      this._stripWidth = stripPackingInput._stripWidth;
-
-      return;
-    }
-
-    this._packedCircles = [];
-    this._pendingPlacementRadii = stripPackingInput.circleRadii;
-    this._stripWidth = stripPackingInput.stripWidth;
-  }
-
-  public pendingPlacementsCount(): number {
-    return this._pendingPlacementRadii.length;
-  }
-
-  public currentStripLength(): number {
-    const distancesToMaxRight = this._packedCircles.map(
-      getDistanceFromStripLeftToCircleRight
-    );
-
-    return Math.max(...distancesToMaxRight);
-  }
-
-  public isCompleted(): boolean {
-    return this.pendingPlacementsCount() === 0;
-  }
-
-  public getOutput(): StripPackingOutput {
-    if (!this.isCompleted()) {
-      throw new Error("The solution is not found yet.");
-    }
-
-    const stripLength = this.currentStripLength();
-
-    return {
-      circles: this._packedCircles,
-      stripLength,
-    };
-  }
-
-  public placeNext(pendingPlacementIndex: number): void {
-    const radiusToPlace = this._pendingPlacementRadii.splice(
-      pendingPlacementIndex,
-      1
-    )[0];
-
-    const pendingPlacements: Array<{
-      circle: Circle;
-      minNeighborDistance: number;
-    }> = [];
-
-    for (let i = -3; i < this._packedCircles.length; i++) {
-      for (let j = i + 1; j < this._packedCircles.length; j++) {
-        const cornerPositions = this._getCornerPositions(i, j, radiusToPlace);
-
-        for (const circleCenter of cornerPositions) {
-          const circle: Circle = {
-            center: circleCenter,
-            radius: radiusToPlace,
-          };
-
-          const minNeighborDistance = this._getMinDistanceToNeighbor(
-            circle,
-            i,
-            j
-          );
-          if (minNeighborDistance === null) {
-            continue;
-          }
-
-          pendingPlacements.push({
-            circle,
-            minNeighborDistance,
-          });
-        }
-      }
-    }
-
-    const { circle: circleToPlace } = getMinBySelector(
-      pendingPlacements,
-      ({ minNeighborDistance }) => minNeighborDistance
-    );
-    this._packedCircles.push(circleToPlace);
-  }
-
-  private _getCornerPositions(
-    i: number,
-    j: number,
-    radiusToPlace: number
-  ): Array<Vector2d> {
-    let cornerPositions: Array<Vector2d>;
-    if (i === StripEdges.left && j === StripEdges.top) {
-      cornerPositions = getCornerPositionsBetweenLeftAndTopEdge(
-        radiusToPlace,
-        this._stripWidth
-      );
-    } else if (i === StripEdges.left && j === StripEdges.bottom) {
-      cornerPositions =
-        getCornerPositionsBetweenLeftAndBottomEdge(radiusToPlace);
-    } else if (i === StripEdges.top && j === StripEdges.bottom) {
-      cornerPositions = [];
-    } else if (i === StripEdges.left) {
-      const packagedCircleJ = this._packedCircles[j];
-      cornerPositions = getCornerPositionsBetweenCircleAndLeftEdge(
-        packagedCircleJ,
-        radiusToPlace
-      );
-    } else if (i === StripEdges.top) {
-      const packagedCircleJ = this._packedCircles[j];
-      cornerPositions = getCornerPositionsBetweenCircleAndTopEdge(
-        packagedCircleJ,
-        radiusToPlace,
-        this._stripWidth
-      );
-    } else if (i === StripEdges.bottom) {
-      const packagedCircleJ = this._packedCircles[j];
-      cornerPositions = getCornerPositionsBetweenCircleAndBottomEdge(
-        packagedCircleJ,
-        radiusToPlace
-      );
-    } else {
-      const packagedCircleI = this._packedCircles[i];
-      const packagedCircleJ = this._packedCircles[j];
-
-      cornerPositions = getCornerPositionsBetweenCircles(
-        packagedCircleI,
-        packagedCircleJ,
-        radiusToPlace
-      );
-    }
-
-    return cornerPositions;
-  }
-
-  private _getMinDistanceToNeighbor(
-    circle: Circle,
-    iToSkip: number,
-    jToSkip: number
-  ): number | null {
-    let minDistance: number | null = null;
-    for (let i = -3; i < this._packedCircles.length; i++) {
-      if (i === iToSkip || i === jToSkip) {
-        continue;
+    let solutions: Array<StripPackingState> = [startingSolution];
+    while (true) {
+      const nextLevelSolutions: Array<StripPackingState> = [];
+      for (const parentSolutions of solutions) {
+        const descendants = this._offspring(parentSolutions);
+        nextLevelSolutions.push(...descendants);
       }
 
-      let currentDistance: number;
-      if (i === StripEdges.bottom) {
-        currentDistance = circleDistanceToStripBottom(circle);
-      } else if (i === StripEdges.top) {
-        currentDistance = circleDistanceToStripTop(circle, this._stripWidth);
-      } else if (i === StripEdges.left) {
-        currentDistance = circleDistanceToStripLeft(circle);
-      } else {
-        const packagedCircle = this._packedCircles[i];
-        currentDistance = circlesDistance(circle, packagedCircle);
+      if (nextLevelSolutions[0].isCompleted()) {
+        return this._getBestStates(nextLevelSolutions, 1)[0];
       }
 
-      if (currentDistance < 0) {
-        return null;
-      }
+      solutions = this._getBestStates(nextLevelSolutions, this._def.beamWidth);
+    }
+  }
 
-      if (minDistance === null || currentDistance < minDistance) {
-        minDistance = currentDistance;
-      }
+  private _offspring(parentState: StripPackingState): Array<StripPackingState> {
+    const descendants: Array<StripPackingState> = [];
+
+    for (let i = 0; i < parentState.pendingPlacementsCount(); i++) {
+      const child = new StripPackingState(parentState);
+      child.placeNext(i);
+      descendants.push(child);
     }
 
-    return minDistance;
+    return descendants;
+  }
+
+  private _getBestStates(
+    states: ReadonlyArray<StripPackingState>,
+    numberOfBestStates: number
+  ): Array<StripPackingState> {
+    if (states.length <= numberOfBestStates) {
+      return states.concat();
+    }
+
+    let statesWithLength = states.map((state) => ({
+      state,
+      length: state.currentStripLength(),
+    }));
+
+    const bestStates: Array<StripPackingState> = [];
+    for (let i = 0; i < numberOfBestStates; i++) {
+      const minIndex = getMinIndexBySelector(
+        statesWithLength,
+        ({ length }) => length
+      );
+
+      const { state: currentBestState } = statesWithLength.splice(
+        minIndex,
+        1
+      )[0];
+      bestStates.push(currentBestState);
+    }
+
+    return bestStates;
   }
 }
