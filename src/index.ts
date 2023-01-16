@@ -21,8 +21,8 @@ import { getMinBySelector } from "./utils";
 
 const enum StripEdges {
   left = -3,
-  top = -2,
-  bottom = -1,
+  bottom = -2,
+  top = -1,
 }
 
 export class StripPackingAlgorithm {
