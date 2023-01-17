@@ -138,7 +138,7 @@ export class StripPackingState {
     } else if (i === StripEdges.left && j === StripEdges.bottom) {
       cornerPositions =
         getCornerPositionsBetweenLeftAndBottomEdge(radiusToPlace);
-    } else if (i === StripEdges.top && j === StripEdges.bottom) {
+    } else if (i === StripEdges.bottom && j === StripEdges.top) {
       cornerPositions = [];
     } else if (i === StripEdges.left) {
       const packagedCircleJ = this._packedCircles[j];
