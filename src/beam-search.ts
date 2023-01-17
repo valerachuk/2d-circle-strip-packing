@@ -21,6 +21,9 @@ export class StripPackingBeamSearch {
         nextLevelSolutions.push(...descendants);
       }
 
+      const placementsLeft = nextLevelSolutions[0].pendingPlacementsCount();
+      console.log({ placementsLeft });
+
       if (nextLevelSolutions[0].isCompleted()) {
         return this._getBestStates(nextLevelSolutions, 1)[0];
       }
