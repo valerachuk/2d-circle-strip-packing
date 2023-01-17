@@ -1,4 +1,4 @@
-import { BeamSearchDef, StripPackingBeamSearch } from "./beam-search";
+import { StripPackingBeamSearch } from "./beam-search";
 import { sy565, sy1 } from "./benchmarks";
 import { emptyDir, writeFile } from "fs-extra";
 import { OUTPUT_DIR } from "./constants";
@@ -6,14 +6,14 @@ import path from "path";
 import { saveVisualization } from "./visualizer";
 
 (async () => {
-  const beamSearchDef: BeamSearchDef = {
-    beamWidth: 10,
+  const beamSearch = new StripPackingBeamSearch({
+    // beamWidth: 10,
     // beamWidth: 1000,
-    // beamWidth: 5000,
-  };
-  const beamSearch = new StripPackingBeamSearch(beamSearchDef);
+    beamWidth: 5000,
+  });
 
-  const resultState = beamSearch.solve(sy1);
+  const benchmark = sy1;
+  const resultState = beamSearch.solve(benchmark);
   const output = resultState.getOutput();
 
   const outputJson = JSON.stringify(output, null, 2);
@@ -25,6 +25,6 @@ import { saveVisualization } from "./visualizer";
 
   await saveVisualization({
     stripPackingOutput: output,
-    stripWidth: beamSearchDef.beamWidth,
+    stripWidth: benchmark.stripWidth,
   });
 })();
