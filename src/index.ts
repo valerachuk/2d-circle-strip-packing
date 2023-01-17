@@ -7,9 +7,7 @@ import { saveVisualization } from "./visualizer";
 
 (async () => {
   const beamSearch = new StripPackingBeamSearch({
-    // beamWidth: 10,
-    // beamWidth: 1000,
-    beamWidth: 5000,
+    beamWidth: 1000,
   });
 
   const benchmark = sy1;
