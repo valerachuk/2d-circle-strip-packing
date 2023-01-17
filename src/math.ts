@@ -1,5 +1,26 @@
 import { Circle, Vector2d } from "./types";
 
+export const solveSquareEquation = (
+  a: number,
+  b: number,
+  c: number
+): [] | [number] | [number, number] => {
+  const discriminant = b ** 2 - 4 * a * c;
+
+  if (discriminant < 0) {
+    return [];
+  }
+
+  if (discriminant === 0) {
+    return [-b / (2 * a)];
+  }
+
+  const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+  const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+
+  return [x1, x2];
+};
+
 export const euclideanDistance = (a: Vector2d, b: Vector2d): number =>
   Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 
@@ -147,16 +168,7 @@ export const getCornerPositionsBetweenCircles = (
     return [];
   }
 
-  const x1 = (-B + Math.sqrt(discriminant)) / (2 * A);
-  const x2 = (-B - Math.sqrt(discriminant)) / (2 * A);
-
-  const y1 = f_x(x1);
-  const y2 = f_x(x2);
-
-  const vec1: Vector2d = { x: x1, y: y1 };
-  const vec2: Vector2d = { x: x2, y: y2 };
-
-  return [vec1, vec2];
+  return solveSquareEquation(A, B, C).map((x) => ({ x, y: f_x(x) }));
 };
 
 export const getCornerPositionsBetweenCircleAndLeftEdge = (
