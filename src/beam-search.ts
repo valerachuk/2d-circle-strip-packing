@@ -2,7 +2,7 @@ import { StripPackingState } from "./strip-packing";
 import { StripPackingInput } from "./types";
 import { getMinIndexBySelector } from "./utils";
 
-type BeamSearchDef = {
+export type BeamSearchDef = {
   beamWidth: number;
 };
 
