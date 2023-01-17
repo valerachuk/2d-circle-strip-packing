@@ -171,26 +171,170 @@ export const getCornerPositionsBetweenCircles = (
   return solveSquareEquation(A, B, C).map((x) => ({ x, y: f_x(x) }));
 };
 
+/**
+  y' - ?
+
+
+  1)
+
+  { x' = r';
+  { (x_1 - x') ^ 2 + (y_1 - y') ^ 2 = (r_1 + r') ^ 2;
+
+
+  2) replace x' with r'
+
+  { (x_1 - r') ^ 2 + (y_1 - y') ^ 2 = (r_1 + r') ^ 2;
+
+
+  3)
+
+  { (y_1 - y') ^ 2 = (r_1 + r') ^ 2 - (x_1 - r') ^ 2;
+
+
+  4)
+
+  { y_1 ^ 2 - 2 y_1 y' + (y') ^ 2  = (r_1 + r') ^ 2 - (x_1 - r') ^ 2;
+
+
+  5)
+
+  { (y') ^ 2 - 2 y_1 y' + y_1 ^ 2 - (r_1 + r') ^ 2 + (x_1 - r') ^ 2 = 0;
+
+
+  6)
+
+  A = 1;
+  B = (-2 y_1);
+  C = (y_1 ^ 2 - (r_1 + r') ^ 2 + (x_1 - r') ^ 2);
+
+ */
 export const getCornerPositionsBetweenCircleAndLeftEdge = (
   circle: Circle,
   radius: number
 ): Array<Vector2d> => {
-  throw new Error("Not implemented.");
+  const {
+    center: { x: x_1, y: y_1 },
+    radius: r_1,
+  } = circle;
+
+  const r_ = radius;
+
+  const A = 1;
+  const B = -2 * y_1;
+  const C = y_1 ** 2 - (r_1 + r_) ** 2 + (x_1 - r_) ** 2;
+
+  return solveSquareEquation(A, B, C).map((y) => ({ x: r_, y }));
 };
 
+/**
+  x' - ?
+
+
+  1)
+
+  { y' = r';
+  { (x_1 - x') ^ 2 + (y_1 - y') ^ 2 = (r_1 + r') ^ 2;
+
+
+  2) replace y' with r'
+
+  { (x_1 - x') ^ 2 + (y_1 - r') ^ 2 = (r_1 + r') ^ 2;
+
+
+  3)
+
+  { (x_1 - x') ^ 2 = (r_1 + r') ^ 2 - (y_1 - r') ^ 2;
+
+
+  4)
+
+  { x_1^2 - 2 x_1 x' + (x')^2 = (r_1 + r') ^ 2 - (y_1 - r') ^ 2;
+
+
+  5)
+
+  { (x')^2 - 2 x_1 x' + x_1^2 - (r_1 + r') ^ 2 + (y_1 - r') ^ 2;
+
+
+  6)
+
+  A = 1;
+  B = (-2 x_1);
+  C = (x_1^2 - (r_1 + r') ^ 2 + (y_1 - r') ^ 2);
+
+ */
 export const getCornerPositionsBetweenCircleAndBottomEdge = (
   circle: Circle,
   radius: number
 ): Array<Vector2d> => {
-  throw new Error("Not implemented.");
+  const {
+    center: { x: x_1, y: y_1 },
+    radius: r_1,
+  } = circle;
+
+  const r_ = radius;
+
+  const A = 1;
+  const B = -2 * x_1;
+  const C = x_1 ** 2 - (r_1 + r_) ** 2 + (y_1 - r_) ** 2;
+
+  return solveSquareEquation(A, B, C).map((x) => ({ x, y: r_ }));
 };
 
+/**
+  x' - ?
+
+
+  1)
+
+  { y' = W - r';
+  { (x_1 - x') ^ 2 + (y_1 - y') ^ 2 = (r_1 + r') ^ 2;
+
+
+  2) replace y' with r'
+
+  { (x_1 - x') ^ 2 + (y_1 - W + r') ^ 2 = (r_1 + r') ^ 2;
+
+
+  3)
+
+  { (x_1 - x') ^ 2 = (r_1 + r') ^ 2 - (y_1 - W + r') ^ 2;
+
+
+  4)
+
+  { x_1^2 - 2 x_1 x' + (x')^2 = (r_1 + r') ^ 2 - (y_1 - W + r') ^ 2;
+
+
+  5)
+
+  { (x')^2 - 2 x_1 x' + x_1^2 - (r_1 + r') ^ 2 + (y_1 - W + r') ^ 2;
+
+
+  6)
+
+  A = 1;
+  B = (-2 x_1);
+  C = (x_1^2 - (r_1 + r') ^ 2 + (y_1 - W + r') ^ 2);
+
+ */
 export const getCornerPositionsBetweenCircleAndTopEdge = (
   circle: Circle,
   radius: number,
   stripWidth: number
 ): Array<Vector2d> => {
-  throw new Error("Not implemented.");
+  const {
+    center: { x: x_1, y: y_1 },
+    radius: r_1,
+  } = circle;
+
+  const r_ = radius;
+
+  const A = 1;
+  const B = -2 * x_1;
+  const C = x_1 ** 2 - (r_1 + r_) ** 2 + (y_1 - stripWidth + r_) ** 2;
+
+  return solveSquareEquation(A, B, C).map((x) => ({ x, y: stripWidth - r_ }));
 };
 
 export const getCornerPositionsBetweenLeftAndBottomEdge = (
