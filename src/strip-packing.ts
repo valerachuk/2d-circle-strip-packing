@@ -79,7 +79,7 @@ export class StripPackingState {
     };
   }
 
-  public placeNext(pendingPlacementIndex: number): void {
+  public placeNext(pendingPlacementIndex: number): number {
     const radiusToPlace = this._pendingPlacementRadii.splice(
       pendingPlacementIndex,
       1
@@ -117,11 +117,13 @@ export class StripPackingState {
       }
     }
 
-    const { circle: circleToPlace } = getMinBySelector(
+    const { circle: circleToPlace, minNeighborDistance } = getMinBySelector(
       pendingPlacements,
       ({ minNeighborDistance }) => minNeighborDistance
     );
     this._packedCircles.push(circleToPlace);
+
+    return minNeighborDistance;
   }
 
   private _getCornerPositions(

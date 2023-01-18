@@ -24,3 +24,9 @@ export const getMinIndexBySelector = <T>(
 
   return minIndex;
 };
+
+export const sortBySelector = <T>(
+  arr: ReadonlyArray<T>,
+  numberSelector: (t: T) => number
+): Array<T> =>
+  arr.concat().sort((a, b) => numberSelector(a) - numberSelector(b));

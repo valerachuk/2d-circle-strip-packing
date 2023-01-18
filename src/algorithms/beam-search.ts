@@ -1,6 +1,6 @@
-import { StripPackingState } from "./strip-packing";
-import { StripPackingInput } from "./types";
-import { getMinIndexBySelector } from "./utils";
+import { StripPackingState } from "../strip-packing";
+import { StripPackingInput } from "../types";
+import { getBestStates } from "./utils";
 
 type BeamSearchDef = {
   beamWidth: number;
@@ -13,6 +13,12 @@ export class StripPackingBeamSearch {
     const startingSolution = new StripPackingState(stripPackingInput);
     startingSolution.placeNext(0);
 
+    return this.solveUsingStartingNode(startingSolution);
+  }
+
+  public solveUsingStartingNode(
+    startingSolution: StripPackingState
+  ): StripPackingState {
     let solutions: Array<StripPackingState> = [startingSolution];
     while (true) {
       const nextLevelSolutions: Array<StripPackingState> = [];
@@ -22,13 +28,13 @@ export class StripPackingBeamSearch {
       }
 
       const placementsLeft = nextLevelSolutions[0].pendingPlacementsCount();
-      console.log({ placementsLeft });
+      console.log({ beamWidth: this._def.beamWidth, placementsLeft });
 
       if (nextLevelSolutions[0].isCompleted()) {
-        return this._getBestStates(nextLevelSolutions, 1)[0];
+        return getBestStates(nextLevelSolutions, 1)[0];
       }
 
-      solutions = this._getBestStates(nextLevelSolutions, this._def.beamWidth);
+      solutions = getBestStates(nextLevelSolutions, this._def.beamWidth);
     }
   }
 
@@ -42,35 +48,5 @@ export class StripPackingBeamSearch {
     }
 
     return descendants;
-  }
-
-  private _getBestStates(
-    states: ReadonlyArray<StripPackingState>,
-    numberOfBestStates: number
-  ): Array<StripPackingState> {
-    if (states.length <= numberOfBestStates) {
-      return states.concat();
-    }
-
-    let statesWithLength = states.map((state) => ({
-      state,
-      length: state.currentStripLength(),
-    }));
-
-    const bestStates: Array<StripPackingState> = [];
-    for (let i = 0; i < numberOfBestStates; i++) {
-      const minIndex = getMinIndexBySelector(
-        statesWithLength,
-        ({ length }) => length
-      );
-
-      const { state: currentBestState } = statesWithLength.splice(
-        minIndex,
-        1
-      )[0];
-      bestStates.push(currentBestState);
-    }
-
-    return bestStates;
   }
 }

@@ -1,14 +1,17 @@
-import { StripPackingBeamSearch } from "./beam-search";
+import { StripPackingBeamSearch } from "./algorithms/beam-search";
 import { sy565, sy1 } from "./benchmarks";
 import { emptyDir, writeFile } from "fs-extra";
 import { OUTPUT_DIR } from "./constants";
 import path from "path";
 import { saveVisualization } from "./visualizer";
+import { StripPackingSeparateBeamSearch } from "./algorithms/separate-beam-search";
 
 (async () => {
-  const beamSearch = new StripPackingBeamSearch({
-    beamWidth: 1000,
-  });
+  // const beamSearch = new StripPackingBeamSearch({
+  //   beamWidth: 1000,
+  // });
+
+  const beamSearch = new StripPackingSeparateBeamSearch();
 
   const benchmark = sy1;
   const resultState = beamSearch.solve(benchmark);
