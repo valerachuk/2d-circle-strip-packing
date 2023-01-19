@@ -1,0 +1,28 @@
+import { StripPackingBeamSearch } from "./beam-search";
+import { sy565, sy1 } from "./benchmarks";
+import { emptyDir, writeFile } from "fs-extra";
+import { OUTPUT_DIR } from "./constants";
+import path from "path";
+import { saveVisualization } from "./visualizer";
+
+(async () => {
+  const beamSearch = new StripPackingBeamSearch({
+    beamWidth: 1000,
+  });
+
+  const benchmark = sy1;
+  const resultState = beamSearch.solve(benchmark);
+  const output = resultState.getOutput();
+
+  const outputJson = JSON.stringify(output, null, 2);
+  console.log(outputJson);
+
+  await emptyDir(OUTPUT_DIR);
+  const outputJsonPath = path.resolve(OUTPUT_DIR, "result.json");
+  await writeFile(outputJsonPath, outputJson);
+
+  await saveVisualization({
+    stripPackingOutput: output,
+    stripWidth: benchmark.stripWidth,
+  });
+})();
