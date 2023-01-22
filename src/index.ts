@@ -1,5 +1,5 @@
 import { StripPackingBeamSearch } from "./algorithms/beam-search";
-import { sy565, sy1 } from "./benchmarks";
+import { sy565, sy1, sy12, sy13, sy23, sy123 } from "./benchmarks";
 import { emptyDir, writeFile } from "fs-extra";
 import { OUTPUT_DIR } from "./constants";
 import path from "path";
@@ -13,7 +13,7 @@ import { StripPackingSeparateBeamSearch } from "./algorithms/separate-beam-searc
 
   const beamSearch = new StripPackingSeparateBeamSearch();
 
-  const benchmark = sy1;
+  const benchmark = sy123;
   const resultState = beamSearch.solve(benchmark);
   const output = resultState.getOutput();
 
