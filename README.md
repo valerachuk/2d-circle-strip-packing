@@ -28,7 +28,7 @@ Implemented in `StripPackingBeamSearch`.
 
 The procedure aims to find a better position for a circle to place into a strip with some circles already placed. Let E is a set of already placed circles and bottom + left + top strip edge. Let P is a set of corner positions that are possible placements of a circle where it touches two elements (e1, e2) from E. The MLDP procedure chooses a corner position є P that has the nearest distance to an element є E (except e1, e2).
 
-For example, the third circle will be placed at p3(1) because it has the nearest distance to E / { e1, e2 } - circle 1.
+For example, the third circle will be placed at p3(1) because it has the nearest distance to circle 1 є E / { e1, e2 }.
 
 ![MLDP example](./img/mldp.png)
 
