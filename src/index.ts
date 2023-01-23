@@ -4,16 +4,13 @@ import { emptyDir, writeFile } from "fs-extra";
 import { OUTPUT_DIR } from "./constants";
 import path from "path";
 import { saveVisualization } from "./visualizer";
-import { StripPackingSeparateBeamSearch } from "./algorithms/separate-beam-search";
 
 (async () => {
-  // const beamSearch = new StripPackingBeamSearch({
-  //   beamWidth: 1000,
-  // });
+  const beamSearch = new StripPackingBeamSearch({
+    beamWidth: 1000,
+  });
 
-  const beamSearch = new StripPackingSeparateBeamSearch();
-
-  const benchmark = sy123;
+  const benchmark = sy1;
   const resultState = beamSearch.solve(benchmark);
   const output = resultState.getOutput();
 
